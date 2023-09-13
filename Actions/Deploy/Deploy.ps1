@@ -127,6 +127,13 @@ try {
     if ($searchArtifacts) {
         New-Item $artifactsFolder -ItemType Directory | Out-Null
         $allArtifacts = @(GetArtifacts -token $token -api_url $ENV:GITHUB_API_URL -repository $ENV:GITHUB_REPOSITORY -mask "Apps" -projects $deploymentSettings.Projects -Version $artifacts -branch $ENV:GITHUB_REF_NAME)
+        Write-Host 'SEARCH ARTIFACTS'
+        Write-Host $ENV:GITHUB_API_URL
+        Write-Host $ENV:GITHUB_REPOSITORY
+        Write-Host $deploymentSettings.Projects
+        Write-Host $artifacts
+        Write-Host $ENV:GITHUB_REF_NAME
+        Write-Host $token
         $allArtifacts += @(GetArtifacts -token $token -api_url $ENV:GITHUB_API_URL -repository $ENV:GITHUB_REPOSITORY -mask "Dependencies" -projects $deploymentSettings.Projects -Version $artifacts -branch $ENV:GITHUB_REF_NAME)
         if ($allArtifacts) {
             $allArtifacts | ForEach-Object {
