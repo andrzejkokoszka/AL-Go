@@ -738,6 +738,7 @@ function GetArtifacts {
         $artifactsJson = InvokeWebRequest -Headers $headers -Uri $uri
         $artifacts = $artifactsJson | ConvertFrom-Json
         $page++
+        $branch = $branch.Replace('/','_')
         $artifactPattern = "*-$branch-$mask-$version"
         Write-Host "ArtifactPattern: $artifactPattern"
         $allArtifacts += @($artifacts.artifacts | Where-Object { !$_.expired -and $_.name -like $artifactPattern })
