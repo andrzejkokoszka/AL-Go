@@ -13,7 +13,6 @@
     [Parameter(HelpMessage = "The settings for all Deployment Environments", Mandatory = $true)]
     [string] $deploymentEnvironmentsJson
 )
-Write-Host "00000000000000000000"
 $telemetryScope = $null
 
 try {
@@ -55,7 +54,6 @@ try {
     }
 
     $artifacts = $artifacts.Replace('/',([System.IO.Path]::DirectorySeparatorChar)).Replace('\',([System.IO.Path]::DirectorySeparatorChar))
-    Write-Host "111111111111111111"
     Write-Host  $artifacts
     $apps = @()
     $artifactsFolder = Join-Path $ENV:GITHUB_WORKSPACE ".artifacts"
@@ -124,10 +122,9 @@ try {
     else {
         $searchArtifacts = $true
     }
-    Write-Host "222222222222222"
     if ($searchArtifacts) {
         New-Item $artifactsFolder -ItemType Directory | Out-Null
-        $allArtifacts = @(GetArtifacts -token $token -api_url $ENV:GITHUB_API_URL -repository $ENV:GITHUB_REPOSITORY -mask "Apps" -projects $deploymentSettings.Projects -Version $artifacts -branch $ENV:GITHUB_REF_NAME)
+        $allArtifacts = @(GetArtifacts -token $token -api_url $ENV:GITHUB_API_URL -repository $ENV:GITHUB_REPOSITORY -mask "Apps" -projects $deploymentSettings.Projects -Version $artifacts -branch $ENV:GITHUB_REF_NAME.Replace('/','_'))
         Write-Host 'SEARCH ARTIFACTS'
         Write-Host $ENV:GITHUB_API_URL
         Write-Host $ENV:GITHUB_REPOSITORY
@@ -135,7 +132,7 @@ try {
         Write-Host $artifacts
         Write-Host $ENV:GITHUB_REF_NAME
         Write-Host $token
-        $allArtifacts += @(GetArtifacts -token $token -api_url $ENV:GITHUB_API_URL -repository $ENV:GITHUB_REPOSITORY -mask "Dependencies" -projects $deploymentSettings.Projects -Version $artifacts -branch $ENV:GITHUB_REF_NAME)
+        $allArtifacts += @(GetArtifacts -token $token -api_url $ENV:GITHUB_API_URL -repository $ENV:GITHUB_REPOSITORY -mask "Dependencies" -projects $deploymentSettings.Projects -Version $artifacts -branch $ENV:GITHUB_REF_NAME.Replace('/','_'))
         if ($allArtifacts) {
             $allArtifacts | ForEach-Object {
                 $appFile = DownloadArtifact -token $token -artifact $_ -path $artifactsFolder
@@ -152,7 +149,6 @@ try {
 
     Write-Host "Apps to deploy"
     $apps | Out-Host
-    Write-Host "3333333333333333333"
     Set-Location $ENV:GITHUB_WORKSPACE
 
     $customScript = Join-Path $ENV:GITHUB_WORKSPACE ".github/DeployTo$($deploymentSettings.EnvironmentType).ps1"
