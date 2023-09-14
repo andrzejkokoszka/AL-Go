@@ -68,6 +68,8 @@ try {
             $deploymentSettings.Projects.Split(',') | ForEach-Object {
                 $project = $_.Replace('\','_').Replace('/','_')
                 $refname = "$ENV:GITHUB_REF_NAME".Replace('/','_')
+                Write-Host "111111111111111111111111111111"
+                Write-Host $refname
                 Write-Host "project '$project'"
                 $apps += @((Get-ChildItem -Path $artifacts -Filter "$project-$refname-Apps-*.*.*.*") | ForEach-Object { $_.FullName })
                 if (!($apps)) {
@@ -124,15 +126,10 @@ try {
     }
     if ($searchArtifacts) {
         New-Item $artifactsFolder -ItemType Directory | Out-Null
-        $allArtifacts = @(GetArtifacts -token $token -api_url $ENV:GITHUB_API_URL -repository $ENV:GITHUB_REPOSITORY -mask "Apps" -projects $deploymentSettings.Projects -Version $artifacts -branch $ENV:GITHUB_REF_NAME.Replace('/','_'))
-        Write-Host 'SEARCH ARTIFACTS'
-        Write-Host $ENV:GITHUB_API_URL
-        Write-Host $ENV:GITHUB_REPOSITORY
-        Write-Host $deploymentSettings.Projects
-        Write-Host $artifacts
-        Write-Host $ENV:GITHUB_REF_NAME
-        Write-Host $token
-        $allArtifacts += @(GetArtifacts -token $token -api_url $ENV:GITHUB_API_URL -repository $ENV:GITHUB_REPOSITORY -mask "Dependencies" -projects $deploymentSettings.Projects -Version $artifacts -branch $ENV:GITHUB_REF_NAME.Replace('/','_'))
+        $refname = $ENV:GITHUB_REF_NAME.Replace('/','_')
+        Write-Host $refname
+        $allArtifacts = @(GetArtifacts -token $token -api_url $ENV:GITHUB_API_URL -repository $ENV:GITHUB_REPOSITORY -mask "Apps" -projects $deploymentSettings.Projects -Version $artifacts -branch $refname )
+        $allArtifacts += @(GetArtifacts -token $token -api_url $ENV:GITHUB_API_URL -repository $ENV:GITHUB_REPOSITORY -mask "Dependencies" -projects $deploymentSettings.Projects -Version $artifacts -branch $refname)
         if ($allArtifacts) {
             $allArtifacts | ForEach-Object {
                 $appFile = DownloadArtifact -token $token -artifact $_ -path $artifactsFolder
