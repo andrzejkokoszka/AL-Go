@@ -55,7 +55,8 @@ try {
     }
 
     $artifacts = $artifacts.Replace('/',([System.IO.Path]::DirectorySeparatorChar)).Replace('\',([System.IO.Path]::DirectorySeparatorChar))
-
+    Write-Host "111111111111111111"
+    Write-Host  $artifacts
     $apps = @()
     $artifactsFolder = Join-Path $ENV:GITHUB_WORKSPACE ".artifacts"
     $artifactsFolderCreated = $false
@@ -123,7 +124,7 @@ try {
     else {
         $searchArtifacts = $true
     }
-
+    Write-Host "222222222222222"
     if ($searchArtifacts) {
         New-Item $artifactsFolder -ItemType Directory | Out-Null
         $allArtifacts = @(GetArtifacts -token $token -api_url $ENV:GITHUB_API_URL -repository $ENV:GITHUB_REPOSITORY -mask "Apps" -projects $deploymentSettings.Projects -Version $artifacts -branch $ENV:GITHUB_REF_NAME)
@@ -151,7 +152,7 @@ try {
 
     Write-Host "Apps to deploy"
     $apps | Out-Host
-
+    Write-Host "3333333333333333333"
     Set-Location $ENV:GITHUB_WORKSPACE
 
     $customScript = Join-Path $ENV:GITHUB_WORKSPACE ".github/DeployTo$($deploymentSettings.EnvironmentType).ps1"
