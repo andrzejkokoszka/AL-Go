@@ -13,7 +13,7 @@
     [Parameter(HelpMessage = "The settings for all Deployment Environments", Mandatory = $true)]
     [string] $deploymentEnvironmentsJson
 )
-
+Write-Host "00000000000000000000"
 $telemetryScope = $null
 
 try {
